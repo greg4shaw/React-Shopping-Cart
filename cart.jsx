@@ -102,28 +102,34 @@ const Products = (props) => {
   const addToCart = (e) => {
     let name = e.target.name;
     let item = items.filter((item) => item.name == name);
+    // filter returns an array
     console.log(`add to Cart ${JSON.stringify(item)}`);
+    if (item[0].instock == 0) return;
     item[0].instock -= 1;
     setCart([...cart, ...item]);
     //doFetch(query);
   };
-  const deleteCartItem = (item, index) => {
-    let newCart = cart.filter((item, i) => index != i);
-    //console.log(`CHECK ${item.instock}`);
-    item.instock += 1;
+  const deleteCartItem = (delIndex) => {
+    let newCart = cart.filter((item, index) => delIndex != index);
+    let target = cart.filter((item, index) => delIndex == index);
+    let newItems = items.map((item, index) => {
+      if (item.name == target[0].name) item.instock += 1;
+      return item;
+    })
     setCart(newCart);
+    setItems(newItems);
   };
   //const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
 
   //setItems(lister);
   let list = items.map((item, index) => {
     let n = index + 1049;
-    let url = "https://picsum.photos/id/" + n + "/50/50";
+    let uhit = "https://picsum.photos/id/" + n + "/50/50";
     //photos[index % 4]
 
     return (
       <li key={index}>
-        <Image src={url} width={70} roundedCircle></Image>
+        <Image src={uhit} width={70} roundedCircle></Image>
         <Button variant="primary" size="large">
           {item.name}:{item.cost} Stock={item.instock}
         </Button>
@@ -140,7 +146,7 @@ const Products = (props) => {
           </Accordion.Toggle>
         </Card.Header>
         <Accordion.Collapse
-          onClick={() => deleteCartItem(item, index)}
+          onClick={() => deleteCartItem(index)}
           eventKey={1 + index}
         >
           <Card.Body>
